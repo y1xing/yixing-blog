@@ -13,6 +13,7 @@ from functools import wraps
 import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -29,11 +30,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 ##CONFIGURE CHROME OPTIONS
+# chrome_options = webdriver.ChromeOptions()
+# # chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--disable-dev-shm-usage")
+# chrome_options.add_argument("--no-sandbox")
+# chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+
 chrome_options = webdriver.ChromeOptions()
-# chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("window-size=1920x1480")
+chrome_options.add_argument("disable-dev-shm-usage")
 
 
 ##CONFIGURE TABLES
@@ -150,8 +155,9 @@ def form_filler():
     form = FormFiller()
     if form.validate_on_submit():
         p1_name = form.p1_name.data
-        driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-        return render_template(driver.get("https://form.gov.sg/#!/60176407fedc6c0011a1bed4"))
+        # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+        driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=chrome_options)
+        # return render_template(driver.get("https://form.gov.sg/#!/60176407fedc6c0011a1bed4"))
     return render_template("form_filler.html", form=form, current_user=current_user)
 
 
