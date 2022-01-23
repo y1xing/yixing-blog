@@ -157,7 +157,7 @@ def form_filler():
         p1_name = form.p1_name.data
         # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
         driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=chrome_options)
-        render_template(driver.get("https://form.gov.sg/#!/60176407fedc6c0011a1bed4"))
+        driver.get("https://form.gov.sg/#!/60176407fedc6c0011a1bed4")
     return render_template("form_filler.html", form=form, current_user=current_user)
 
 
