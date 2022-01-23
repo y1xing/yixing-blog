@@ -7,10 +7,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, FormFiller
 from flask_gravatar import Gravatar
 from functools import wraps
 import os
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -25,6 +27,13 @@ gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=Fa
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL1", "sqlite:///blog.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+##CONFIGURE CHROME OPTIONS
+chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 
 
 ##CONFIGURE TABLES
@@ -134,6 +143,16 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('get_all_posts'))
+
+
+@app.route('/form', methods=['GET', 'POST'])
+def form_filler():
+    form = FormFiller()
+    if form.validate_on_submit():
+        p1_name = form.p1_name.data
+        driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+        driver.get("https://form.gov.sg/#!/60176407fedc6c0011a1bed4")
+    return render_template("form_filler.html", form=form, current_user=current_user)
 
 
 @app.route("/post/<int:post_id>", methods=['POST', 'GET'])

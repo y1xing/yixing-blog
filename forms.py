@@ -28,3 +28,7 @@ class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Let Me Up!")
+
+class FormFiller(FlaskForm):
+    p1_name = StringField("P1 Name", validators=[DataRequired()])
+    submit = SubmitField("Start Bot!")
